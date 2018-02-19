@@ -1,5 +1,5 @@
 {
-    "name": "bonfimsystems/hack-unit",
+    "name": "bonfim/hack-unit",
     "description": "HackUnit, a HACK Unit Testing Framework",
     "type": "library",
     "keywords": [
