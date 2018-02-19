@@ -1,0 +1,26 @@
+{
+    "name": "bonfimsystems/hack-unit",
+    "description": "HackUnit, a HACK Unit Testing Framework",
+    "type": "library",
+    "keywords": [
+        "hackunit",
+        "xunit",
+        "testing",
+        "hack",
+        "hacklang",
+        "hhvm"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Edson Onildo",
+            "email": "edsononildo@bonfimsystems.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Bonfim\\Component\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}

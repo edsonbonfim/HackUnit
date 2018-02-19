@@ -1,0 +1,111 @@
+<?hh
+
+hackunit();
+
+function hackunit() : void
+{
+    // Load settings
+    if (!$settings = loadSettings())
+        failed("Fatal Error: 'hackunit.json' config file not found.");
+
+    // Load tests files
+    if (!$files = loadFiles($settings->tests->folder))
+        failed("Fatal Error: Tests folder '{$settings->tests->folder}' not found.");
+
+    // Include composer autoload
+    if (!includeAutoload($settings->autoload))
+        failed("Fatal Error: Composer autoloader '{$settings->autoload}' file not found.");
+
+    // Include tests files
+    includeFiles($settings->tests->folder, $files);
+
+    $success = 0;
+    $failed = 0;
+
+    // Instance test class
+    foreach ($files as $file) {
+        $class = substr($file, 0, strlen($file) - 4);
+        $test = new $class;
+
+        foreach ($test->methods as $method) {
+            // Check if method is a test
+            if (substr($method, 0, 4) != 'test')
+                continue;
+
+            // Execute method
+            $test->$method();
+
+            if ($test->status['failed'])
+                testFailed($test, $method);
+
+            $success++;
+        }
+    }
+
+    $total = $success + $failed;
+
+    success("OK ({$total} tests, {$success} assertions, {$failed} errors)");
+}
+
+function includeFiles(string $folder, array $files) : void
+{
+    foreach ($files as $file)
+        include "$folder/$file";
+}
+
+function includeAutoload(string $autoload) : bool
+{
+    if (!file_exists($autoload))
+        return false;
+
+    include_once $autoload;
+
+    return true;
+}
+
+function loadSettings() : ?stdClass
+{
+    $settingsFile = 'hackunit.json';
+
+    if (!file_exists($settingsFile))
+        return null;
+
+    $settings = file_get_contents($settingsFile);
+
+    return json_decode($settings);
+}
+
+function loadFiles(string $folder) : ?array
+{
+    @$files = scandir($folder);
+
+    if (!$files)
+        return null;
+
+    $files = array_slice($files, 2);
+
+    return $files;
+}
+
+function success(string $message) : void
+{
+    echo "\033[42m\n$message\n\n\033[0m";
+    exit(0);
+}
+
+function failed(string $message) : void
+{
+    echo "\033[41m\n$message\n\n\033[0m";
+    exit(-1);
+}
+
+function testFailed($class, string $method) : void
+{
+    echo "\033[41m\nTest Failed: ".get_class($class)."::$method\n\n\033[0m";
+    echo "Expected:\n";
+    var_dump($class->expected);
+    echo "\nActual:\n";
+    var_dump($class->actual);
+    echo "\n";
+    exit(-1);
+}

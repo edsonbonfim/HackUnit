@@ -1,0 +1,6 @@
+{
+    "autoload": "vendor/autoload.php",
+    "tests": {
+        "folder": "tests"
+    }
+}
