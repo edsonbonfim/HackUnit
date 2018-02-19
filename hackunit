@@ -24,7 +24,7 @@ function hackunit() : void
 
     // Instance test class
     foreach ($files as $file) {
-        $class = substr($file, 0, strlen($file) - 4);
+        $class = substr($file, 0, strlen($file) - 3);
         $test = new $class;
 
         foreach ($test->methods as $method) {
